@@ -1,0 +1,9 @@
+@import "@luanedcosta/sassutility/dist/scss/utility.scss";
+
+html, body{
+    @include bs-border-box;
+    @include font-family((Arial, sans-serif));
+    @include m-size(null, 100vh);
+    @include overflow(hidden, x);
+    @include font(grey_scale(40%), 16px);
+}
