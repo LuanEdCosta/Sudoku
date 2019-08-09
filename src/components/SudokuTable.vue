@@ -38,9 +38,6 @@ import gameStates from '@/config/GameStates'
 
 export default {
     name: 'SudokuTable',
-    props: {
-        onlyEditableCellsCanBeSelected: { type: Boolean, default: false },
-    },
     data() {
         return {
             gameState: gameStates.NOT_STARTED,
@@ -56,7 +53,7 @@ export default {
             return null
         },
         onlyEditableAndIsEditable(){
-            return this.onlyEditableCellsCanBeSelected && this.selectedCell && !this.selectedCell.editable
+            return this.$store.state.config.navigateOnlyInEnabledCells && this.selectedCell && !this.selectedCell.editable
         }
     },
     methods: {
@@ -64,7 +61,7 @@ export default {
             return cellValue === 0 ? '' : `${cellValue}`
         },
         cellClick(cell) { 
-            if(this.onlyEditableCellsCanBeSelected){
+            if(this.$store.state.config.navigateOnlyInEnabledCells){
                 if(cell.editable){
                     this.selectedCell = this.isCellSelected(cell) ? null : { ...cell }
                 }
@@ -168,7 +165,6 @@ $cell_hover_bg_color: black_rgba(.05);
 
 .sudoku-table-wrapper{
     @include border(1px solid $cell_border_color_dark);
-    @include display(inline-block);
     @include outline(none);
     .sudoku-table{
         @include border-collapse(collapse);

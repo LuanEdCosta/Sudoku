@@ -5,7 +5,7 @@
         <div class="controllers-body">
 
             <div class="timer">
-                <timer ref="timer" />
+                <base-timer ref="timer" />
             </div>
 
             <div class="controller-btn-wrapper">
@@ -46,13 +46,13 @@
 </template>
 
 <script>
-import timer from '@/components/Timer'
+import baseTimer from '@/components/BaseTimer'
 import gameStates from '@/config/GameStates'
 
 export default {
     name: 'SudokuControllers',
     components: {
-        timer
+        baseTimer
     },
     data(){
         return {
@@ -111,9 +111,8 @@ export default {
 $controller_width: 250px;
 
 .sudoku-controllers{
-    @include display(inline-block);
     @include border(1px solid $cell_border_color);
-    @include margin(8px, left);
+    @include margin(0 8px);
 
     .controllers-title{
         @include font(white, 18px, bold, center);
