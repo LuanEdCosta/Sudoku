@@ -8,7 +8,12 @@
         @keydown.right.d.exact.prevent="rightPressed"
         @keydown.delete.exact="deletePressed"
         @keydown="onKeyPressed">
-        <table class="sudoku-table" >
+
+        <div class="prevent-gameplay" v-if="!isPlaying">
+            <div class="prevent-gameplay-msg">{{ preventGameplayText }}</div>
+        </div>
+
+        <table class="sudoku-table">
             <tbody class="sudoku-table-body">
                 <tr
                     v-for="(n, i) in 9"
@@ -35,14 +40,15 @@
 <script>
 import gameController from '@/controllers/GameController'
 import gameStates from '@/config/GameStates'
+import { gameMixin, configMixin } from '@/mixins/StoreMixin'
 
 export default {
     name: 'SudokuTable',
+    mixins: [ gameMixin, configMixin ],
     data() {
         return {
-            gameState: gameStates.NOT_STARTED,
             selectedCell: null,
-            sudokuMatrix: gameController.generateRandomNumbers(0),
+            sudokuMatrix: gameController.getSudokuMatrixFilledWithZeros(),
         }
     },
     computed: {
@@ -53,7 +59,14 @@ export default {
             return null
         },
         onlyEditableAndIsEditable(){
-            return this.$store.state.config.navigateOnlyInEnabledCells && this.selectedCell && !this.selectedCell.editable
+            return this.navigateOnlyInEnabledCells && this.selectedCell && !this.selectedCell.editable
+        },
+        preventGameplayText(){
+            switch(this.gameState){
+            case gameStates.NOT_STARTED: return 'Click Play to Start'
+            case gameStates.PAUSED: return 'Paused'
+            }
+            return ''
         }
     },
     methods: {
@@ -61,7 +74,7 @@ export default {
             return cellValue === 0 ? '' : `${cellValue}`
         },
         cellClick(cell) { 
-            if(this.$store.state.config.navigateOnlyInEnabledCells){
+            if(this.navigateOnlyInEnabledCells){
                 if(cell.editable){
                     this.selectedCell = this.isCellSelected(cell) ? null : { ...cell }
                 }
@@ -149,13 +162,29 @@ export default {
             if(this.selectedCellReference){
                 if(this.selectedCellReference.editable){
                     this.selectedCellReference.value = value
+                    if(value !== 0){
+                        this.checkIfPlayerWonTheGame()
+                    }
                 }
             }
         },
-        setGameState(gameState){
-            this.gameState = gameState
+        checkIfPlayerWonTheGame(){
+            const playerWonTheGame = gameController.validateSudokuMatrix(this.sudokuMatrix)
+            if(playerWonTheGame){
+                alert('Congratulations, you won the game!')
+            }
         }
     },
+    watch: {
+        gameState(newVal, oldVal){
+            if(newVal === gameStates.STARTED && oldVal === gameStates.NOT_STARTED){
+                this.sudokuMatrix = gameController.startGame(this.gameDificulty)
+            }else if(newVal === gameStates.NOT_STARTED){
+                this.selectedCell = null
+                this.sudokuMatrix = gameController.getSudokuMatrixFilledWithZeros()
+            }
+        }
+    }
 }
 </script>
 
@@ -166,6 +195,22 @@ $cell_hover_bg_color: black_rgba(.05);
 .sudoku-table-wrapper{
     @include border(1px solid $cell_border_color_dark);
     @include outline(none);
+    @include position(relative);
+
+    .prevent-gameplay{
+        @include position(absolute);
+        @include size(100%);
+        @include bg(black_rgba(.4));
+        @include display(table);
+        .prevent-gameplay-msg{
+            @include display(table-cell);
+            @include v-align(middle);
+            @include font(white, 28px, bold, center);
+            @include text-trans(uppercase);
+            @include t-shadow(1px 2px 2px black_rgba(.2));
+        }
+    }
+
     .sudoku-table{
         @include border-collapse(collapse);
         .sudoku-table-body{

@@ -5,7 +5,9 @@
         <div class="controllers-body">
 
             <div class="timer">
-                <base-timer ref="timer" />
+                <base-timer 
+                    ref="timer" 
+                    @onChange="onTimerChange"/>
             </div>
 
             <div class="controller-btn-wrapper">
@@ -38,7 +40,7 @@
             <div 
                 class="controller-delete"
                 @click="numberPadNumberClick(0)">
-                Apagar
+                Delete
             </div>
 
         </div>
@@ -48,16 +50,17 @@
 <script>
 import baseTimer from '@/components/BaseTimer'
 import gameStates from '@/config/GameStates'
+import { gameMixin, configMixin, modifyStoreMixin } from '@/mixins/StoreMixin'
 
 export default {
     name: 'SudokuControllers',
+    mixins: [ gameMixin, configMixin, modifyStoreMixin ],
     components: {
         baseTimer
     },
     data(){
         return {
             numberPadNumber: 0,
-            gameState: 0
         }
     },
     computed: {
@@ -89,19 +92,20 @@ export default {
         playPauseClicked(){
             if(this.gameState === gameStates.NOT_STARTED || this.gameState === gameStates.PAUSED){
                 this.$refs.timer.start()
-                this.gameState = gameStates.STARTED
+                this.modifyGameObject('gameState', gameStates.STARTED)
             }else{
                 this.$refs.timer.pause()
-                this.gameState = gameStates.PAUSED
+                this.modifyGameObject('gameState', gameStates.PAUSED)
             }
-            this.$emit('onPlayPauseClicked', this.gameState)
         },
         restartClicked(){
             if(this.gameState === gameStates.PAUSED){
                 this.$refs.timer.stop()
-                this.gameState = gameStates.NOT_STARTED
-                this.$emit('onRestartClicked', this.gameState)
+                this.modifyGameObject('gameState', gameStates.NOT_STARTED)
             }
+        },
+        onTimerChange({ text }){
+            this.updateStoreGameTime(text)
         }
     }
 }

@@ -1,39 +1,36 @@
 <template>
     <div class="main">
-        <navbar></navbar>
+
+        <sudoku-navbar></sudoku-navbar>
+
         <div class="content">
             <sudoku-table ref="sudokuTable"/>
 
-            <sudokuControllers
-                @onPlayPauseClicked="onActionButtonClick"
-                @onRestartClicked="onActionButtonClick"
-                @onNumberSelected="onNumberSelected" />
+            <sudokuControllers @onNumberSelected="onNumberSelected" />
 
             <sudoku-settings />
         </div>
+        
     </div>
 </template>
 
 <script>
+import sudokuNavbar from '@/components/SudokuNavbar'
 import sudokuTable from '@/components/SudokuTable'
 import sudokuControllers from '@/components/SudokuControllers'
 import sudokuSettings from '@/components/SudokuSettings'
-import navbar from '@/components/Navbar'
 
 export default {
     name: 'Main',
     components: {
+        sudokuNavbar,
         sudokuTable,
-        navbar,
         sudokuControllers,
         sudokuSettings,
     },
     methods:{
         onNumberSelected(number){
             this.$refs.sudokuTable.setValueInCell(number)
-        },
-        onActionButtonClick(gameState){
-            this.$refs.sudokuTable.setGameState(gameState)
         },
     }
 }

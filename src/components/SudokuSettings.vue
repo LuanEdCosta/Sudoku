@@ -1,32 +1,38 @@
 <template>
     <div class="sudoku-config-wrapper">
+        
         <div class="sudoku-config-title">Settings</div>
+
         <div class="sudoku-config-body">
+
+            <div v-if="isNotStarted">
+                <div>Choose a dificulty</div>
+                <sudoku-dificulty-picker />
+            </div>
+
             <base-checkbox 
-                :checked="$store.state.config.navigateOnlyInEnabledCells"
+                :checked="navigateOnlyInEnabledCells"
                 @onCheck="changeNavigationStyle">
                 Navigate only in enabled cells
             </base-checkbox>
-
         </div>
+
     </div>
 </template>
 
 <script>
 import baseCheckbox from '@/components/BaseCheckbox'
+import sudokuDificultyPicker from '@/components/SudokuDificultyPicker'
+import { gameMixin, configMixin, modifyStoreMixin } from '@/mixins/StoreMixin'
 
 export default {
     name: 'SudokuConfig',
-    components: { baseCheckbox },
+    mixins: [ gameMixin, configMixin, modifyStoreMixin ],
+    components: { baseCheckbox, sudokuDificultyPicker },
     methods: {
         changeNavigationStyle(isChecked){
-            this.setNewConfigObject('navigateOnlyInEnabledCells', isChecked)
+            this.modifyConfigObject('navigateOnlyInEnabledCells', isChecked)
         },
-        setNewConfigObject(propNameToEdit, propValue){
-            const config = { ...this.$store.state.config }
-            config[propNameToEdit] = propValue
-            this.$store.commit('setConfig', config)
-        }
     },
 }
 </script>

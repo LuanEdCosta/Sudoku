@@ -40,6 +40,7 @@ export default {
             this.secondsToShow = 0
             this.minutesToShow = 0
             this.hoursToShow = 0
+            this.emitChanges()
         },
         onEachInterval(){
             this.secondsCount++
@@ -54,12 +55,20 @@ export default {
                 this.hoursToShow++
                 this.minutesToShow = 0
             }
+
+            this.emitChanges()
         },
         formatNumberToShow(number){
             if(number < 10){
                 return '0' + number
             }
             return number
+        },
+        emitChanges(){
+            this.$emit('onChange', {
+                secondsCount: this.secondsCount,
+                text: this.timerText,
+            })
         }
     }
 }

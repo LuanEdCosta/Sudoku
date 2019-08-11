@@ -13,7 +13,7 @@ export default new Router({
         },
         {
             path: '/',
-            component: () => import('./views/Main.vue'),
+            component: () => import('@/views/Main.vue'),
         },
     ],
 })
