@@ -13,13 +13,13 @@
             <div class="controller-btn-wrapper">
                 <button 
                     class="controller-btn"
-                    @click="playPauseClicked">
+                    @click="playOrPauseGame">
                     {{ playButtonText }}
                 </button>
                 <button 
                     class="controller-btn"
                     :class="restartButtonClasses"
-                    @click="restartClicked">
+                    @click="restartGame">
                     Restart
                 </button>
             </div>
@@ -89,16 +89,23 @@ export default {
         numberPadNumberClick(number){
             this.$emit('onNumberSelected', number)
         },
-        playPauseClicked(){
-            if(this.gameState === gameStates.NOT_STARTED || this.gameState === gameStates.PAUSED){
-                this.$refs.timer.start()
-                this.modifyGameObject('gameState', gameStates.STARTED)
+        playOrPauseGame(){
+            if(this.gameState === gameStates.NOT_STARTED || 
+                this.gameState === gameStates.PAUSED){
+                this.playGame()
             }else{
-                this.$refs.timer.pause()
-                this.modifyGameObject('gameState', gameStates.PAUSED)
+                this.pauseGame()
             }
         },
-        restartClicked(){
+        playGame(){
+            this.$refs.timer.start()
+            this.modifyGameObject('gameState', gameStates.STARTED)
+        },
+        pauseGame(){
+            this.$refs.timer.pause()
+            this.modifyGameObject('gameState', gameStates.PAUSED)
+        },
+        restartGame(){
             if(this.gameState === gameStates.PAUSED){
                 this.$refs.timer.stop()
                 this.modifyGameObject('gameState', gameStates.NOT_STARTED)
@@ -116,7 +123,7 @@ $controller_width: 250px;
 
 .sudoku-controllers{
     @include border(1px solid $cell_border_color);
-    @include margin(0 8px);
+    @include margin(8px 4px);
 
     .controllers-title{
         @include font(white, 18px, bold, center);

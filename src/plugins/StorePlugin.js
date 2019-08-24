@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import gameDificulties from '@/config/GameDificulties'
+import gameDifficulties from '@/config/GameDifficulties'
 import gameStates from '@/config/GameStates'
 
 Vue.use(Vuex)
@@ -10,11 +10,12 @@ export default new Vuex.Store({
     state: {
         game: {
             gameState: gameStates.NOT_STARTED,
-            gameTime: ''
+            gameTime: '',
+            wins: []
         },
         config: {
             navigateOnlyInEnabledCells: false,
-            gameDificulty: gameDificulties.EASY 
+            gameDifficulty: gameDifficulties.EASY 
         }
     },
     mutations: {
@@ -26,6 +27,9 @@ export default new Vuex.Store({
         },
         setGameTime(state, gameTime){
             state.game.gameTime = gameTime   
+        },
+        addNewWin(state, win){
+            state.game.wins.push(win)
         }
     },
 })

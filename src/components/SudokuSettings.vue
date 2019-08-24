@@ -5,10 +5,8 @@
 
         <div class="sudoku-config-body">
 
-            <div v-if="isNotStarted">
-                <div>Choose a dificulty</div>
-                <sudoku-dificulty-picker />
-            </div>
+            <div>Choose a difficulty</div>
+            <sudoku-difficulty-picker />
 
             <base-checkbox 
                 :checked="navigateOnlyInEnabledCells"
@@ -22,13 +20,13 @@
 
 <script>
 import baseCheckbox from '@/components/BaseCheckbox'
-import sudokuDificultyPicker from '@/components/SudokuDificultyPicker'
+import sudokuDifficultyPicker from '@/components/SudokuDifficultyPicker'
 import { gameMixin, configMixin, modifyStoreMixin } from '@/mixins/StoreMixin'
 
 export default {
     name: 'SudokuConfig',
     mixins: [ gameMixin, configMixin, modifyStoreMixin ],
-    components: { baseCheckbox, sudokuDificultyPicker },
+    components: { baseCheckbox, sudokuDifficultyPicker },
     methods: {
         changeNavigationStyle(isChecked){
             this.modifyConfigObject('navigateOnlyInEnabledCells', isChecked)
@@ -40,8 +38,9 @@ export default {
 <style lang="scss" scoped>
 .sudoku-config-wrapper{
     @include flex-item(null, 1);
-    @include m-size(250px, null);
+    @include m-size(400px, null);
     @include border(1px solid $cell_border_color);
+    @include margin(8px 4px);
 
     .sudoku-config-title{
         @include font(white, 18px, bold, center);

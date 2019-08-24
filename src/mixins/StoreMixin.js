@@ -13,11 +13,17 @@ export const gameMixin = {
         },
         isNotStarted(){
             return this.gameState === gameStates.NOT_STARTED
+        },
+        playerWins(){
+            return this.$store.state.game.wins
         }
     },
     methods: {
         updateStoreGameTime(gameTime){
             this.$store.commit('setGameTime', gameTime)
+        },
+        addNewWin(win){
+            this.$store.commit('addNewWin', win)
         }
     },
 }
@@ -27,8 +33,8 @@ export const configMixin = {
         navigateOnlyInEnabledCells(){
             return this.$store.state.config.navigateOnlyInEnabledCells
         },
-        gameDificulty(){
-            return this.$store.state.config.gameDificulty
+        gameDifficulty(){
+            return this.$store.state.config.gameDifficulty
         }
     }
 }

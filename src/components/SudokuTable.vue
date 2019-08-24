@@ -1,13 +1,5 @@
 <template>
-    <div
-        class="sudoku-table-wrapper"
-        tabindex="0"
-        @keydown.up.w.exact.prevent="upPressed"
-        @keydown.down.s.exact.prevent="downPressed"
-        @keydown.left.a.exact.prevent="leftPressed"
-        @keydown.right.d.exact.prevent="rightPressed"
-        @keydown.delete.exact="deletePressed"
-        @keydown="onKeyPressed">
+    <div class="sudoku-table-wrapper">
 
         <div class="prevent-gameplay" v-if="!isPlaying">
             <div class="prevent-gameplay-msg">{{ preventGameplayText }}</div>
@@ -152,11 +144,8 @@ export default {
                 this.selectedCellReference.value = 0
             }
         },
-        onKeyPressed(event) {
-            const keyCode = (event.keyCode ? event.keyCode : event.which)
-            if (keyCode >= 96 && keyCode <= 105) {
-                this.setValueInCell(Number(event.key))
-            }
+        onNumberPressed(number) {
+            this.setValueInCell(number)
         },
         setValueInCell(value){
             if(this.selectedCellReference){
@@ -170,20 +159,61 @@ export default {
         },
         checkIfPlayerWonTheGame(){
             const playerWonTheGame = gameController.validateSudokuMatrix(this.sudokuMatrix)
-            if(playerWonTheGame){
-                alert('Congratulations, you won the game!')
+            if(playerWonTheGame){ 
+                const win = {
+                    time: this.gameTime,
+                    difficulty: this.gameDifficulty
+                }
+                this.addNewWin(win)
+                this.$emit('onPlayerWon', win) 
+            }
+        },
+        addNumpadNumberListeners(keyCode, key){
+            // 0 to 9
+            if(keyCode >= 96 && keyCode <= 105){
+                this.onNumberPressed(Number(key))
+            }
+        },
+        addNumberListeners(keyCode, key){
+            // 0 to 9
+            if(keyCode >= 48 && keyCode <= 57){
+                this.onNumberPressed(Number(key))
+            }
+        },
+        addControllerListeners(keyCode){
+            switch(keyCode){
+            case 65: { this.leftPressed(); break } // A
+            case 87: { this.upPressed(); break } // W
+            case 68: { this.rightPressed(); break } // D
+            case 83: { this.downPressed(); break } // S
+
+            case 37: { this.leftPressed(); break } // LEFT ARROW
+            case 38: { this.upPressed(); break } // UP ARROW
+            case 39: { this.rightPressed(); break } // RIGHT ARROW
+            case 40: { this.downPressed(); break } // DOWN ARROW
             }
         }
     },
     watch: {
         gameState(newVal, oldVal){
             if(newVal === gameStates.STARTED && oldVal === gameStates.NOT_STARTED){
-                this.sudokuMatrix = gameController.startGame(this.gameDificulty)
+                this.sudokuMatrix = gameController.startGame(this.gameDifficulty)
             }else if(newVal === gameStates.NOT_STARTED){
                 this.selectedCell = null
                 this.sudokuMatrix = gameController.getSudokuMatrixFilledWithZeros()
             }
         }
+    },
+    created(){
+        window.addEventListener('keyup', e => {
+            const keyCode = (e.keyCode ? e.keyCode : e.which)
+            this.addNumpadNumberListeners(keyCode, e.key)
+            this.addNumberListeners(keyCode, e.key)
+            this.addControllerListeners(keyCode)
+        })
+    },
+    destroyed(){
+        window.removeEventListener('keyup')
     }
 }
 </script>
@@ -196,15 +226,14 @@ $cell_hover_bg_color: black_rgba(.05);
     @include border(1px solid $cell_border_color_dark);
     @include outline(none);
     @include position(relative);
+    @include margin(8px 4px);
 
     .prevent-gameplay{
         @include position(absolute);
         @include size(100%);
         @include bg(black_rgba(.4));
-        @include display(table);
+        @include flex-container(column, wrap, center, center);
         .prevent-gameplay-msg{
-            @include display(table-cell);
-            @include v-align(middle);
             @include font(white, 28px, bold, center);
             @include text-trans(uppercase);
             @include t-shadow(1px 2px 2px black_rgba(.2));

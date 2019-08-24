@@ -1,12 +1,12 @@
-import gameDificulties from "@/config/GameDificulties"
+import gameDifficulties from "@/config/GameDifficulties"
 
 export default {
-    getQuantityOfGeneratedNumbers(dificulty) {
-        switch (dificulty) {
-        case gameDificulties.EASY: return 40
-        case gameDificulties.MEDIUM: return 30
-        case gameDificulties.HARD: return 20
-        case gameDificulties.VERY_HARD: return 10
+    getQuantityOfGeneratedNumbers(difficulty) {
+        switch (difficulty) {
+        case gameDifficulties.EASY: return 40
+        case gameDifficulties.MEDIUM: return 30
+        case gameDifficulties.HARD: return 20
+        case gameDifficulties.VERY_HARD: return 10
         default: return 0
         }
     },
@@ -26,9 +26,9 @@ export default {
         }
         return sudokuMatrix
     },
-    startGame(dificulty) {
+    startGame(difficulty) {
         const sudokuMatrix = this.getSudokuMatrixFilledWithZeros()
-        const quantityOfGeneratedNumbers = this.getQuantityOfGeneratedNumbers(dificulty)
+        const quantityOfGeneratedNumbers = this.getQuantityOfGeneratedNumbers(difficulty)
         let generatedNumbersCounter = 0
         
         for (let i = 0; i < 9; i++) {
